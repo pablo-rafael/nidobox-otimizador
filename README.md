@@ -36,7 +36,7 @@ O motor matemático resolve um problema de **Maximização** estruturado da segu
 * **Backend & Math Engine:** Python 3.11, [PuLP](https://coin-or.github.io/pulp/) (Linear Programming Solver), [Pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/)
 * **Servidor Web:** [Flask](https://flask.palletsprojects.com/), Gunicorn
 * **Frontend:** HTML5, CSS3, JavaScript (Fetch API assíncrona)
-* **Hospedagem / Cloud:** [Render.com](https://render.com)
+* **Hospedagem / Cloud:** [Render.com]([https://render.com](https://nidobox-otimizador.onrender.com/))
 
 ---
 
