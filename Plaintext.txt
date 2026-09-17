@@ -1,0 +1,6 @@
+/nidobox-otimizador
+│── app.py                 # Servidor Web e API (Flask)
+│── otimizador.py          # Lógica Matemática (PuLP e Pandas)
+│── requirements.txt       # Lista de bibliotecas para o deploy
+└── /templates
+    └── index.html         # Interface do usuário (Formulário e Dashboard)
