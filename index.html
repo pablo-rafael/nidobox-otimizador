@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nidobox - Otimizador de Mídia</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 16px; width: 100%; }
+        button:hover { background-color: #218838; }
+        #resultado { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Otimizador de Campanha (PO)</h2>
+    
+    <div class="form-group">
+        <label>Orçamento Total (R$):</label>
+        <input type="number" id="orcamento" value="4500" required>
+    </div>
+    
+    <div class="form-group">
+        <label>Teto de Diversificação Máximo por Canal (%):</label>
+        <input type="number" id="teto_pct" value="40" max="100" required>
+    </div>
+
+    <!-- Exemplo com dados estáticos para o MVP. Depois você pode adicionar botões para criar mais linhas de canais dinamicamente -->
+    <h3>Canais/Influenciadores</h3>
+    <div class="form-group">
+        <label>Canal A (Views por R$):</label>
+        <input type="number" id="canal_a_views" value="15">
+    </div>
+    <div class="form-group">
+        <label>Canal B (Views por R$):</label>
+        <input type="number" id="canal_b_views" value="8">
+    </div>
+
+    <button onclick="gerarEstrategia()">Gerar Estratégia Otimizada</button>
+
+    <div id="resultado"></div>
+</div>
+
+<script>
+    async function gerarEstrategia() {
+        const orcamento = document.getElementById('orcamento').value;
+        const teto_pct = document.getElementById('teto_pct').value;
+        const canal_a = document.getElementById('canal_a_views').value;
+        const canal_b = document.getElementById('canal_b_views').value;
+
+        // Monta o pacote de dados para enviar ao Python
+        const payload = {
+            orcamento: parseFloat(orcamento),
+            teto_pct: parseFloat(teto_pct),
+            canais: [
+                { canal: "Canal A", views_por_real: parseFloat(canal_a) },
+                { canal: "Canal B", views_por_real: parseFloat(canal_b) }
+            ]
+        };
+
+        // Envia para a rota /otimizar no backend
+        const resposta = await fetch('/otimizar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const dados = await resposta.json();
+        
+        // Exibe o resultado na tela
+        const divResultado = document.getElementById('resultado');
+        divResultado.style.display = 'block';
+        
+        if(dados.sucesso) {
+            let html = `<h4>Status: ${dados.dados.status}</h4>`;
+            html += `<p><strong>Visualizações Totais Projetadas:</strong> ${dados.dados.visualizacoes_projetadas_totais}</p><ul>`;
+            dados.dados.alocacao.forEach(item => {
+                html += `<li><strong>${item.canal}:</strong> Investir R$ ${item.valor_alocado} (Gera ${item.visualizacoes} views)</li>`;
+            });
+            html += `</ul>`;
+            divResultado.innerHTML = html;
+        } else {
+            divResultado.innerHTML = `<p style="color:red;">Erro: ${dados.erro}</p>`;
+        }
+    }
+</script>
+
+</body>
+</html>
